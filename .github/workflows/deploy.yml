@@ -1,0 +1,49 @@
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # Ejecutar diariamente a medianoche para actualizar certificados
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies npm 📦
+        run: npm ci
+
+      - name: Fetch Certificates from Drive 📂
+        env:
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+        run: |
+          # Crear archivo de credenciales desde el secreto
+          echo "$GDRIVE_CREDENTIALS" > scripts/service-account.json
+          # Ejecutar script
+          node scripts/fetch-drive.js
+          # Limpiar credenciales
+          rm scripts/service-account.json
+
+      - name: Build Project 🏗️
+        run: npm run build
+
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
