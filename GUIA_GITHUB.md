@@ -28,11 +28,11 @@ git commit -m "Initial commit: Proyecto Portafolio React"
 # 4. Conectar con GitHub (reemplaza TU_USUARIO y TU_REPO)
 git remote add origin https://github.com/TU_USUARIO/TU_REPO.git
 
-# 5. Cambiar nombre de rama a main
-git branch -M main
+# 5. Cambiar nombre de rama a main (Opcional, si prefieres main sobre master)
+# git branch -M main
 
 # 6. Subir código
-git push -u origin main
+git push -u origin master
 ```
 
 ## Paso 3: Configurar Secretos (Para Automatización)
